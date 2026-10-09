@@ -1,0 +1,356 @@
+/* =========================================================
+   見た目の設定（スマホを基本にしたデザイン）
+   まずスマホ用に作り、画面が広いときだけ横幅を制限しています。
+   ========================================================= */
+
+/* ---- 色などの「変数」。ここを変えるとアプリ全体の色が変わる ---- */
+:root {
+  --bg: #f5f6fb;          /* 背景色 */
+  --card: #ffffff;        /* カードの色 */
+  --text: #1f2333;        /* 文字の色 */
+  --sub: #6b7085;         /* うすい文字の色 */
+  --line: #e2e4ee;        /* 枠線の色 */
+  --main: #4f46e5;        /* メインの色（むらさき寄りの青） */
+  --main-soft: #eef0ff;
+  --ok: #16a34a;          /* 正解の緑 */
+  --ok-soft: #e8f8ee;
+  --ng: #dc2626;          /* 不正解の赤 */
+  --ng-soft: #fdecec;
+  --teach: #b45309;       /* 「教えるコツ」の色 */
+  --teach-soft: #fff6e6;
+  --radius: 14px;         /* 角の丸み */
+  --bar: #4f46e5;         /* 上部バーの色（白い文字が読みやすい濃い色） */
+  --on-bar: #ffffff;      /* 上部バーの上の文字色 */
+  --on-main: #ffffff;     /* メイン色のボタンの上の文字色（ダークでは黒にする） */
+  --on-main-sub: rgba(255,255,255,.85);
+  --overlay: rgba(10,12,20,.55); /* 確認ダイアログの後ろを暗くする色 */
+}
+
+/* ---- スマホが「ダークモード」のときの色 ----
+   ・スマホの設定がダーク（かつ、明るいテーマを明示的に選んでいない）とき
+   ・表示先でダークテーマを明示的に選んだとき（data-theme="dark"）
+   のどちらでも同じ色になるよう、2か所に同じ値を書いています。 */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #12131a;
+    --card: #1d1f2a;
+    --text: #eceef7;
+    --sub: #a0a5bb;
+    --line: #2f3242;
+    --main: #8b85ff;
+    --main-soft: #262646;
+    --ok: #4ade80;
+    --ok-soft: #173024;
+    --ng: #f87171;
+    --ng-soft: #3a1c1f;
+    --teach: #fbbf24;
+    --teach-soft: #33291a;
+    --bar: #2e2a7a;
+    --on-main: #12131a;
+    --on-main-sub: rgba(18,19,26,.75);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #12131a;
+  --card: #1d1f2a;
+  --text: #eceef7;
+  --sub: #a0a5bb;
+  --line: #2f3242;
+  --main: #8b85ff;
+  --main-soft: #262646;
+  --ok: #4ade80;
+  --ok-soft: #173024;
+  --ng: #f87171;
+  --ng-soft: #3a1c1f;
+  --teach: #fbbf24;
+  --teach-soft: #33291a;
+  --bar: #2e2a7a;
+  --on-main: #12131a;
+  --on-main-sub: rgba(18,19,26,.75);
+}
+
+/* ---- 全体の基本設定 ---- */
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; } /* iPhoneで勝手に文字が大きくなるのを防ぐ */
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+  font-size: 16px;          /* スマホで読みやすい大きさ（16px未満だとiPhoneで入力時に拡大されてしまう） */
+  line-height: 1.7;
+  -webkit-tap-highlight-color: transparent; /* タップしたときの青い四角を消す */
+}
+
+button { font: inherit; color: inherit; cursor: pointer; }
+
+[hidden] { display: none !important; }
+
+/* ---- 上部の見出しバー（スクロールしても上に残る） ---- */
+.topbar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px); /* iPhoneの切り欠き（ノッチ）の下に止まる */
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--bar);
+  color: var(--on-bar);
+}
+.app-title { margin: 0; font-size: 18px; }
+.icon-btn {
+  width: 40px; height: 40px;
+  border: none; border-radius: 50%;
+  background: rgba(255,255,255,.18);
+  color: var(--on-bar); font-size: 20px;
+}
+
+/* ---- 中身の入れ物。スマホは画面いっぱい、PCでは中央に細く表示 ---- */
+.container {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 16px 16px calc(120px + env(safe-area-inset-bottom));
+}
+
+/* ---- カード（白い四角） ---- */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.section-title { font-size: 16px; margin: 24px 0 10px; }
+.note { font-size: 13px; color: var(--sub); margin: 6px 0; }
+
+/* ---- ホーム画面の上部 ---- */
+.hero { text-align: center; margin: 8px 0 16px; }
+.hero-lead { font-size: 18px; font-weight: bold; margin: 0 0 4px; }
+.hero-sub { font-size: 13px; color: var(--sub); margin: 0; }
+
+.stats-card { display: flex; justify-content: space-around; text-align: center; }
+.stat-num { display: block; font-size: 24px; font-weight: bold; color: var(--main); }
+.stat-label { font-size: 12px; color: var(--sub); }
+
+/* ---- 学習モードのボタン（指で押しやすいよう高さを大きめに） ---- */
+.mode-list { display: grid; gap: 10px; }
+.mode-btn {
+  display: flex; align-items: center; gap: 14px;
+  min-height: 64px;
+  padding: 12px 16px;
+  text-align: left;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.mode-btn b { display: block; }
+.mode-btn small { color: var(--sub); font-size: 12px; }
+.mode-btn.primary { background: var(--main); border-color: var(--main); color: var(--on-main); }
+.mode-btn.primary small { color: var(--on-main-sub); }
+.mode-icon { font-size: 26px; }
+.mode-btn:active, .cat-btn:active, .choice:active { transform: scale(.98); }
+
+/* ---- コースの切りかえタブ（横に2つ並べる） ---- */
+.course-tabs {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  padding: 4px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+}
+.course-tab {
+  min-height: 48px;
+  padding: 6px 8px;
+  border: none; border-radius: 10px;
+  background: transparent;
+  font-size: 13px; font-weight: bold; line-height: 1.4;
+  color: var(--sub);
+}
+.course-tab.active { background: var(--main); color: var(--on-main); }
+
+/* ---- ジャンル別の一覧 ---- */
+.category-list { display: grid; gap: 10px; }
+.cat-card {
+  padding: 14px 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.cat-actions { display: flex; gap: 8px; margin-top: 10px; }
+.small-btn {
+  flex: 1;
+  min-height: 44px; /* 指で押しやすい最低限の高さ */
+  border: 1px solid var(--line); border-radius: 10px;
+  background: var(--bg);
+  font-size: 14px; font-weight: bold;
+}
+.small-btn.primary { background: var(--main-soft); color: var(--main); border-color: transparent; }
+.small-btn:active { transform: scale(.98); }
+
+/* ---- ケース問題の「場面の説明」 ---- */
+.case-box {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--bg);
+  border-left: 4px solid var(--main);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* ---- 要点ノート ---- */
+.notes-title { font-size: 18px; margin: 4px 0; }
+.notes-list { margin-top: 12px; }
+.note-card h3 { font-size: 15px; margin: 0 0 4px; color: var(--main); }
+.note-card p { margin: 0; font-size: 15px; }
+.cat-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.cat-name { font-weight: bold; }
+.cat-meta { font-size: 12px; color: var(--sub); white-space: nowrap; }
+.cat-desc { font-size: 12px; color: var(--sub); margin: 2px 0 8px; }
+.mini-bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.mini-bar > div { height: 100%; background: var(--ok); }
+
+.info summary, .practice summary { font-weight: bold; cursor: pointer; }
+.info ul { padding-left: 1.2em; font-size: 14px; }
+
+.text-btn {
+  display: block; margin: 24px auto 0;
+  background: none; border: none;
+  font-size: 13px; color: var(--sub); text-decoration: underline;
+  padding: 10px;
+}
+.text-btn.danger { color: var(--ng); }
+
+/* ---- 問題画面 ---- */
+.quiz-head { display: flex; justify-content: space-between; font-size: 13px; color: var(--sub); }
+.progress { height: 8px; background: var(--line); border-radius: 4px; margin: 6px 0 12px; overflow: hidden; }
+.progress-bar { height: 100%; width: 0; background: var(--main); transition: width .3s; }
+.timer { text-align: right; font-size: 13px; color: var(--sub); margin-top: -6px; margin-bottom: 8px; }
+
+.tag {
+  display: inline-block;
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--main-soft);
+  color: var(--main);
+}
+.q-text { font-size: 17px; font-weight: bold; margin: 10px 0 0; }
+
+/* 選択肢ボタン：スマホの親指でも押し間違えにくいよう大きく */
+.choices { display: grid; gap: 10px; }
+.choice {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%;
+  min-height: 56px;
+  padding: 12px 14px;
+  text-align: left;
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+}
+.choice-mark {
+  flex: 0 0 30px; height: 30px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: var(--main-soft); color: var(--main);
+  font-weight: bold; font-size: 14px;
+}
+.choice:disabled { cursor: default; opacity: 1; }
+.choice.correct { border-color: var(--ok); background: var(--ok-soft); }
+.choice.correct .choice-mark { background: var(--ok); color: var(--card); }
+.choice.wrong { border-color: var(--ng); background: var(--ng-soft); }
+.choice.wrong .choice-mark { background: var(--ng); color: var(--card); }
+.choice.dim { opacity: .55; }
+
+/* ---- 正誤と解説 ---- */
+.feedback { margin-top: 16px; }
+.judge {
+  text-align: center; font-size: 22px; font-weight: bold;
+  padding: 10px; border-radius: var(--radius); margin-bottom: 12px;
+  scroll-margin-top: 80px; /* 自動スクロールしたとき、上部バーに隠れないように */
+}
+.judge.ok { background: var(--ok-soft); color: var(--ok); }
+.judge.ng { background: var(--ng-soft); color: var(--ng); }
+.explain h3, .teach h3 { font-size: 15px; margin: 0 0 6px; }
+.explain p, .teach p { margin: 0; font-size: 15px; }
+.teach { background: var(--teach-soft); border-color: transparent; }
+.teach h3 { color: var(--teach); }
+
+textarea {
+  width: 100%;
+  font: inherit; font-size: 16px;
+  padding: 10px;
+  border: 1px solid var(--line); border-radius: 10px;
+  background: var(--bg); color: var(--text);
+  resize: vertical;
+}
+
+/* ---- 画面下に固定するボタン置き場 ---- */
+.bottom-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 10;
+  display: grid; gap: 8px;
+  max-width: 560px; margin: 0 auto;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, var(--bg) 70%, transparent);
+}
+.bottom-bar:empty, .bottom-bar:not(:has(button:not([hidden]))) { display: none; }
+.big-btn {
+  width: 100%;
+  min-height: 54px;
+  border: none; border-radius: var(--radius);
+  background: var(--main); color: var(--on-main);
+  font-size: 17px; font-weight: bold;
+}
+.big-btn.secondary { background: var(--card); color: var(--text); border: 1px solid var(--line); }
+
+/* ---- 結果画面 ---- */
+.result-card { text-align: center; }
+.result-label { margin: 0; color: var(--sub); }
+.result-score { font-size: 40px; font-weight: bold; margin: 0; color: var(--main); }
+.result-message { font-weight: bold; margin: 4px 0; }
+
+.review-list { display: grid; gap: 8px; }
+.review-item { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; }
+.review-item summary { display: flex; gap: 10px; cursor: pointer; list-style: none; font-size: 14px; }
+.review-item summary::-webkit-details-marker { display: none; }
+.review-mark { font-weight: bold; flex: 0 0 auto; }
+.review-mark.ok { color: var(--ok); }
+.review-mark.ng { color: var(--ng); }
+.review-body { font-size: 14px; margin-top: 8px; border-top: 1px dashed var(--line); padding-top: 8px; }
+.review-body p { margin: 4px 0; }
+
+/* ---- 確認ダイアログ ---- */
+.confirm-overlay {
+  position: fixed; inset: 0; z-index: 50;
+  display: grid; place-items: center;
+  padding: 16px;
+  background: var(--overlay);
+}
+.confirm-card {
+  width: 100%; max-width: 400px;
+  background: var(--card); color: var(--text);
+  border-radius: var(--radius);
+  padding: 20px 16px 16px;
+}
+.confirm-card p { margin: 0 0 16px; font-weight: bold; }
+.confirm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* キーボード操作のときに、いまどこを選んでいるか分かるように */
+button:focus-visible, textarea:focus-visible, summary:focus-visible {
+  outline: 3px solid var(--main);
+  outline-offset: 2px;
+}
+
+/* 動きを減らす設定の人には、アニメーションを止める */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; scroll-behavior: auto !important; }
+}

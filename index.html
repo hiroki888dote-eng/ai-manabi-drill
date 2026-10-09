@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <!-- スマホの画面幅に合わせて表示するための設定（これが無いとスマホで文字が小さくなる） -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AIまなびドリル</title>
+  <!-- スマホのブラウザ上部の色 -->
+  <meta name="theme-color" content="#4f46e5">
+  <!-- iPhoneで「ホーム画面に追加」したときに、アプリのように全画面で開くための設定 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="AIまなび">
+  <!-- アプリの名前やアイコンをまとめた設定ファイル（Androidなどで使う） -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <!-- iPhoneのホーム画面に表示されるアイコン -->
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== 上部の見出しバー ===== -->
+  <header class="topbar">
+    <button id="backBtn" class="icon-btn" aria-label="ホームへ戻る" hidden>←</button>
+    <h1 class="app-title">AIまなびドリル</h1>
+  </header>
+
+  <main class="container">
+
+    <!-- ===== ① ホーム画面 ===== -->
+    <section id="homeScreen" class="screen">
+      <!-- コースの切りかえタブ（ボタンはJavaScriptで作る） -->
+      <div id="courseTabs" class="course-tabs" role="tablist"></div>
+
+      <div class="hero">
+        <p id="heroLead" class="hero-lead"></p>
+        <p class="hero-sub">解いて → 解説を読んで → 人に説明できるまで理解しよう</p>
+      </div>
+
+      <!-- 全体の成績 -->
+      <div class="card stats-card">
+        <div class="stat">
+          <span class="stat-num" id="statAnswered">0</span>
+          <span class="stat-label">解いた問題</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" id="statRate">-</span>
+          <span class="stat-label">正答率</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num" id="statWeak">0</span>
+          <span class="stat-label">苦手な問題</span>
+        </div>
+      </div>
+
+      <!-- 学習モードのボタン -->
+      <h2 class="section-title">学習モード</h2>
+      <div class="mode-list">
+        <button class="mode-btn primary" id="randomBtn">
+          <span class="mode-icon">🎲</span>
+          <span><b>ランダム10問</b><small>全ジャンルからまんべんなく</small></span>
+        </button>
+        <button class="mode-btn" id="examBtn">
+          <span class="mode-icon">📝</span>
+          <span><b id="examLabel">模擬試験</b><small id="examSub">時間を計って本番の練習</small></span>
+        </button>
+        <button class="mode-btn" id="weakBtn">
+          <span class="mode-icon">🔁</span>
+          <span><b>苦手を復習</b><small>間違えた問題だけを出題</small></span>
+        </button>
+      </div>
+
+      <!-- ジャンル別の一覧（JavaScriptで中身を作る） -->
+      <h2 class="section-title">ジャンル別に学ぶ</h2>
+      <div id="categoryList" class="category-list"></div>
+
+      <!-- 対応している試験の紹介（コースごとに切りかえ） -->
+      <details class="card info" data-course="agent">
+        <summary>AIエージェント・ストラテジスト試験とは</summary>
+        <ul>
+          <li>AICX協会の認定資格。AIエージェントを「どの業務に・どう入れて・どう定着させるか」を考える力を問う試験です。</li>
+          <li>オンライン・多肢選択式・75分。公式シラバスは<b>6章・32セクション</b>で、このアプリのジャンルも同じ6章に分けています。</li>
+          <li>出題は<b>業務の場面を読んで判断するケース問題</b>が中心。評価の観点は「知識理解・適用判断・設計力・説明責任」です。</li>
+        </ul>
+        <p class="note"><b>解き方のコツ：</b>先に設問を読んでから、ケース文で必要なところを拾い読みする。関係者の「絶対に譲れない条件」に印をつけてから選択肢を見る。理想論すぎる選択肢や「AIが全部やる」選択肢は疑う。</p>
+        <p class="note">※問題はこのアプリのオリジナルで、公開情報をもとに作っています。公式テキスト・公式シラバスとあわせて学習し、日程などの最新情報は公式サイトで確認してください。</p>
+      </details>
+      <details class="card info" data-course="basic">
+        <summary>このコースで目指せる主な試験</summary>
+        <ul>
+          <li><b>G検定</b>（日本ディープラーニング協会）… AIの基礎・機械学習・ディープラーニング・法律や倫理まで幅広く出題</li>
+          <li><b>生成AIパスポート</b>（生成AI活用普及協会）… 生成AIのしくみ、上手な使い方、リスクや法律</li>
+          <li><b>DS検定・AI実装検定</b> など … 機械学習の基礎部分が共通</li>
+        </ul>
+        <p class="note">※問題はこのアプリのオリジナルです。法律やガイドラインは更新されることがあるので、受験前は各試験の公式サイトで最新の出題範囲（シラバス）も確認してください。</p>
+      </details>
+
+      <button class="text-btn danger" id="resetBtn">学習記録をリセット</button>
+    </section>
+
+    <!-- ===== ② 問題画面 ===== -->
+    <section id="quizScreen" class="screen" hidden>
+      <!-- 進み具合のバー -->
+      <div class="quiz-head">
+        <span id="quizTitle" class="quiz-title"></span>
+        <span id="quizCount" class="quiz-count"></span>
+      </div>
+      <div class="progress"><div id="progressBar" class="progress-bar"></div></div>
+      <div id="timer" class="timer" hidden></div>
+
+      <div class="card question-card">
+        <span id="qCategory" class="tag"></span>
+        <!-- ケース問題のときだけ表示する「場面の説明」 -->
+        <div id="qCase" class="case-box" hidden></div>
+        <p id="qText" class="q-text"></p>
+      </div>
+
+      <!-- 選択肢ボタン（JavaScriptで作る） -->
+      <div id="choices" class="choices"></div>
+
+      <!-- 回答後に出てくる「正誤と解説」 -->
+      <div id="feedback" class="feedback" hidden>
+        <div id="judge" class="judge"></div>
+
+        <div class="card explain">
+          <h3>📖 解説</h3>
+          <p id="explainText"></p>
+        </div>
+
+        <div class="card teach">
+          <h3>🧑‍🏫 人に教えるときのコツ</h3>
+          <p id="teachText"></p>
+        </div>
+
+        <!-- 自分の言葉で説明する練習（人に教えられる力をつける） -->
+        <details class="card practice">
+          <summary>✍️ 自分の言葉で説明してみよう</summary>
+          <p class="note">友だちに説明するつもりで、30秒で話せる文章を書いてみましょう。書けたら上の「教えるときのコツ」と見比べてみて。</p>
+          <textarea id="practiceText" rows="4" placeholder="例：〇〇とは、かんたんに言うと…"></textarea>
+        </details>
+      </div>
+
+      <!-- 次へボタン（画面下に固定してスマホの親指で押しやすく） -->
+      <div class="bottom-bar">
+        <button id="nextBtn" class="big-btn" hidden>次の問題へ</button>
+      </div>
+    </section>
+
+    <!-- ===== 要点ノート画面 ===== -->
+    <section id="notesScreen" class="screen" hidden>
+      <h2 id="notesTitle" class="notes-title"></h2>
+      <p class="note">問題を解く前にざっと読み、解いたあとに「人に説明できるか」を確かめましょう。</p>
+      <div id="notesList" class="notes-list"></div>
+      <div class="bottom-bar">
+        <button id="notesStartBtn" class="big-btn">この章の問題を解く</button>
+      </div>
+    </section>
+
+    <!-- ===== ③ 結果画面 ===== -->
+    <section id="resultScreen" class="screen" hidden>
+      <div class="card result-card">
+        <p class="result-label">結果</p>
+        <p class="result-score"><span id="resultCorrect">0</span> / <span id="resultTotal">0</span></p>
+        <p id="resultMessage" class="result-message"></p>
+        <p id="resultTime" class="note"></p>
+      </div>
+
+      <h2 class="section-title">ふりかえり</h2>
+      <p class="note">問題をタップすると解説を見られます。</p>
+      <div id="reviewList" class="review-list"></div>
+
+      <div class="bottom-bar">
+        <button id="retryWrongBtn" class="big-btn">間違えた問題をもう一度</button>
+        <button id="homeBtn" class="big-btn secondary">ホームへ</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== 確認ダイアログ（「本当に？」と聞く小さな画面） ===== -->
+  <div id="confirmBox" class="confirm-overlay" hidden>
+    <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirmMessage">
+      <p id="confirmMessage"></p>
+      <div class="confirm-actions">
+        <button id="confirmNo" class="big-btn secondary">やめる</button>
+        <button id="confirmYes" class="big-btn">はい</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 問題データ → アプリの動き、の順に読み込む -->
+  <script src="js/questions.js"></script>
+  <script src="js/agent-questions.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // オフラインでも開けるようにする仕組み（サービスワーカー）を登録する
+    // ※ 対応していないブラウザや、ファイルを直接開いたときは何もしない
+    if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    }
+  </script>
+</body>
+</html>
